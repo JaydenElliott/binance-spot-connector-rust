@@ -31,6 +31,7 @@ pub struct MarginNewOrder {
     time_in_force: Option<String>,
     recv_window: Option<u64>,
     credentials: Option<Credentials>,
+    auto_repay_at_cancel: Option<bool>,
 }
 
 impl MarginNewOrder {
@@ -51,11 +52,17 @@ impl MarginNewOrder {
             time_in_force: None,
             recv_window: None,
             credentials: None,
+            auto_repay_at_cancel: None,
         }
     }
 
     pub fn is_isolated(mut self, is_isolated: bool) -> Self {
         self.is_isolated = Some(is_isolated);
+        self
+    }
+
+    pub fn auto_repay_at_cancel(mut self, auto_repay_at_cancel: bool) -> Self {
+        self.auto_repay_at_cancel = Some(auto_repay_at_cancel);
         self
     }
 
@@ -168,6 +175,13 @@ impl From<MarginNewOrder> for Request {
 
         if let Some(recv_window) = request.recv_window {
             params.push(("recvWindow".to_owned(), recv_window.to_string()));
+        }
+
+        if let Some(auto_repay_at_cancel) = request.auto_repay_at_cancel {
+            params.push((
+                "autoRepayAtCancel".to_owned(),
+                auto_repay_at_cancel.to_string(),
+            ));
         }
 
         Request {
