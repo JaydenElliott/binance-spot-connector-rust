@@ -44,6 +44,7 @@ pub mod margin_repay;
 pub mod margin_repay_record;
 pub mod margin_transfer;
 pub mod margin_transfer_history;
+pub mod portfolio_margin_new_order;
 pub mod toggle_bnb_burn;
 
 use rust_decimal::Decimal;
@@ -91,6 +92,7 @@ use margin_repay::MarginRepay;
 use margin_repay_record::MarginRepayRecord;
 use margin_transfer::MarginTransfer;
 use margin_transfer_history::MarginTransferHistory;
+use portfolio_margin_new_order::PortfolioMarginNewOrder;
 use toggle_bnb_burn::ToggleBNBBurn;
 
 pub fn margin_transfer(asset: &str, amount: Decimal, r#type: u32) -> MarginTransfer {
@@ -143,6 +145,14 @@ pub fn margin_order(symbol: &str) -> MarginOrder {
 
 pub fn margin_new_order(symbol: &str, side: &str, r#type: &str) -> MarginNewOrder {
     MarginNewOrder::new(symbol, side, r#type)
+}
+
+pub fn portfolio_margin_new_order(
+    symbol: &str,
+    side: &str,
+    r#type: &str,
+) -> PortfolioMarginNewOrder {
+    PortfolioMarginNewOrder::new(symbol, side, r#type)
 }
 
 pub fn margin_cancel_order(symbol: &str) -> MarginCancelOrder {
