@@ -28,6 +28,7 @@ pub mod margin_interest_history;
 pub mod margin_interest_rate_history;
 pub mod margin_loan_record;
 pub mod margin_max_borrowable;
+pub mod margin_max_leverage;
 pub mod margin_max_transferable;
 pub mod margin_my_trades;
 pub mod margin_new_oco_order;
