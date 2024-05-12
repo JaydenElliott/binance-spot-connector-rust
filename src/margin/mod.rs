@@ -44,6 +44,8 @@ pub mod margin_repay;
 pub mod margin_repay_record;
 pub mod margin_transfer;
 pub mod margin_transfer_history;
+pub mod portfolio_margin_cancel_open_orders;
+pub mod portfolio_margin_cancel_order;
 pub mod portfolio_margin_new_order;
 pub mod toggle_bnb_burn;
 
@@ -92,10 +94,14 @@ use margin_repay::MarginRepay;
 use margin_repay_record::MarginRepayRecord;
 use margin_transfer::MarginTransfer;
 use margin_transfer_history::MarginTransferHistory;
+use portfolio_margin_cancel_order::PortfolioMarginCancelOrder;
 use portfolio_margin_new_order::PortfolioMarginNewOrder;
 use toggle_bnb_burn::ToggleBNBBurn;
 
-use self::margin_max_leverage::MarginMaxLeverage;
+use self::{
+    margin_max_leverage::MarginMaxLeverage,
+    portfolio_margin_cancel_open_orders::PortfolioMarginCancelOpenOrders,
+};
 
 pub fn margin_transfer(asset: &str, amount: Decimal, r#type: u32) -> MarginTransfer {
     MarginTransfer::new(asset, amount, r#type)
@@ -155,6 +161,14 @@ pub fn portfolio_margin_new_order(
     r#type: &str,
 ) -> PortfolioMarginNewOrder {
     PortfolioMarginNewOrder::new(symbol, side, r#type)
+}
+
+pub fn portfolio_margin_cancel_order(symbol: &str) -> PortfolioMarginCancelOrder {
+    PortfolioMarginCancelOrder::new(symbol)
+}
+
+pub fn portfolio_margin_cancel_open_orders(symbol: &str) -> PortfolioMarginCancelOpenOrders {
+    PortfolioMarginCancelOpenOrders::new(symbol)
 }
 
 pub fn margin_cancel_order(symbol: &str) -> MarginCancelOrder {
