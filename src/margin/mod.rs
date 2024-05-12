@@ -95,6 +95,8 @@ use margin_transfer_history::MarginTransferHistory;
 use portfolio_margin_new_order::PortfolioMarginNewOrder;
 use toggle_bnb_burn::ToggleBNBBurn;
 
+use self::margin_max_leverage::MarginMaxLeverage;
+
 pub fn margin_transfer(asset: &str, amount: Decimal, r#type: u32) -> MarginTransfer {
     MarginTransfer::new(asset, amount, r#type)
 }
@@ -219,6 +221,10 @@ pub fn margin_max_borrowable(asset: &str) -> MarginMaxBorrowable {
 
 pub fn margin_max_transferable(asset: &str) -> MarginMaxTransferable {
     MarginMaxTransferable::new(asset)
+}
+
+pub fn margin_max_leverage(max_leverage: u64) -> MarginMaxLeverage {
+    MarginMaxLeverage::new(max_leverage)
 }
 
 pub fn isolated_margin_transfer_history(symbol: &str) -> IsolatedMarginTransferHistory {
