@@ -98,6 +98,7 @@ pub mod http;
 pub mod isolated_margin_stream;
 pub mod margin_stream;
 pub mod market_stream;
+pub mod porfolio_margin_stream;
 pub mod stream;
 pub mod user_data_stream;
 

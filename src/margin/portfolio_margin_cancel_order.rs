@@ -17,7 +17,6 @@ use crate::http::{request::Request, Credentials, Method};
 /// ```
 pub struct PortfolioMarginCancelOrder {
     symbol: String,
-    is_isolated: Option<bool>,
     order_id: Option<u64>,
     orig_client_order_id: Option<String>,
     new_client_order_id: Option<String>,
@@ -29,7 +28,6 @@ impl PortfolioMarginCancelOrder {
     pub fn new(symbol: &str) -> Self {
         Self {
             symbol: symbol.to_owned(),
-            is_isolated: None,
             order_id: None,
             orig_client_order_id: None,
             new_client_order_id: None,
@@ -67,13 +65,6 @@ impl PortfolioMarginCancelOrder {
 impl From<PortfolioMarginCancelOrder> for Request {
     fn from(request: PortfolioMarginCancelOrder) -> Request {
         let mut params = vec![("symbol".to_owned(), request.symbol.to_string())];
-
-        if let Some(is_isolated) = request.is_isolated {
-            params.push((
-                "isIsolated".to_owned(),
-                is_isolated.to_string().to_uppercase(),
-            ));
-        }
 
         if request.order_id.is_none() && request.orig_client_order_id.is_none() {
             // todo return result
