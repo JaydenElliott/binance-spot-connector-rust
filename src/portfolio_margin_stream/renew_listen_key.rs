@@ -65,7 +65,7 @@ mod tests {
         assert_eq!(
             request,
             Request {
-                path: "/papi/v1/userDataStream".to_owned(),
+                path: "/papi/v1/listenKey".to_owned(),
                 credentials: Some(credentials),
                 method: Method::Put,
                 params: vec![("listenKey".to_owned(), "listen-key".to_string()),],

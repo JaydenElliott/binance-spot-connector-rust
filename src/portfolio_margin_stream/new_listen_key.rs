@@ -1,6 +1,6 @@
 use crate::http::{request::Request, Credentials, Method};
 
-/// `POST /papi/v1/userDataStream`
+/// `POST /papi/v1/listenKey`
 ///
 /// Start a new user data stream.
 /// The stream will close after 60 minutes unless a keepalive is sent. If the account has an active `listenKey`, that `listenKey` will be returned and its validity will be extended for 60 minutes.
@@ -34,7 +34,7 @@ impl From<NewListenKey> for Request {
         let params = vec![];
 
         Request {
-            path: "/papi/v1/userDataStream".to_owned(),
+            path: "/papi/v1/listenKey".to_owned(),
             method: Method::Post,
             params,
             credentials: _request.credentials,
@@ -66,7 +66,7 @@ mod tests {
         assert_eq!(
             request,
             Request {
-                path: "/papi/v1/userDataStream".to_owned(),
+                path: "/papi/v1/listenKey".to_owned(),
                 credentials: Some(credentials),
                 method: Method::Post,
                 params: vec![],

@@ -1,6 +1,6 @@
 use crate::http::{request::Request, Credentials, Method};
 
-/// `DELETE /papi/v1/userDataStream`
+/// `DELETE /papi/v1/listenKey`
 ///
 /// Close out a user data stream.
 ///
@@ -37,7 +37,7 @@ impl From<CloseListenKey> for Request {
         let params = vec![("listenKey".to_owned(), request.listen_key.to_string())];
 
         Request {
-            path: "/papi/v1/userDataStream".to_owned(),
+            path: "/papi/v1/listenKey".to_owned(),
             method: Method::Delete,
             params,
             credentials: request.credentials,
@@ -65,7 +65,7 @@ mod tests {
         assert_eq!(
             request,
             Request {
-                path: "/papi/v1/userDataStream".to_owned(),
+                path: "/papi/v1/listenKey".to_owned(),
                 credentials: Some(credentials),
                 method: Method::Delete,
                 params: vec![("listenKey".to_owned(), "listen-key".to_string()),],
