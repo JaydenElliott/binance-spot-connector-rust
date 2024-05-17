@@ -44,7 +44,7 @@ impl BinanceHttpClient<HttpsConnector<HttpConnector>> {
     pub fn with_url(base_url: &str) -> BinanceHttpClient<HttpsConnector<HttpConnector>> {
         BinanceHttpClient {
             client: Client::builder().build::<_, hyper::Body>(HttpsConnector::new()),
-            base_url: base_url.to_owned(),
+            base_url: baase_url.to_owned(),
             timestamp_delta: 0,
             credentials: None,
         }

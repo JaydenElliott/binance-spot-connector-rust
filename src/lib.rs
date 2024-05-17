@@ -89,6 +89,7 @@ pub mod tungstenite;
 
 #[cfg(feature = "enable-hyper")]
 pub mod hyper;
+pub mod reqwest;
 
 #[cfg(feature = "enable-ureq")]
 pub mod ureq;
