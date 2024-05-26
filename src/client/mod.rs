@@ -2,6 +2,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::anyhow;
 use reqwest::{Client, Response};
+use serde::Deserialize;
 use url::Url;
 
 use crate::http::request::{self, Request};
@@ -88,4 +89,18 @@ impl BinanceHttpClient {
             .await
             .map_err(|e| anyhow!("failed to send binance request: {:?}", e))
     }
+}
+
+/// Structured Binance server error
+#[derive(Deserialize, Debug)]
+pub struct BinanceApiError {
+    /// Error code
+    ///
+    /// [API Documentation](https://binance-docs.github.io/apidocs/spot/en/#error-codes)
+    #[serde(rename(deserialize = "code"))]
+    pub code: i16,
+
+    ///Error description
+    #[serde(rename(deserialize = "msg"))]
+    pub message: String,
 }
