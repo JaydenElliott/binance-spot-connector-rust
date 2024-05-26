@@ -3,8 +3,12 @@ use futures_util::SinkExt;
 use tokio::io::{AsyncRead, AsyncWrite};
 use tokio::net::TcpStream;
 use tokio_tungstenite::{
-    connect_async,
-    tungstenite::{handshake::client::Response, protocol::Message, Error},
+    connect_async, connect_async_with_config,
+    tungstenite::{
+        handshake::client::Response,
+        protocol::{Message, WebSocketConfig},
+        Error,
+    },
     MaybeTlsStream, WebSocketStream,
 };
 use url::Url;
@@ -28,6 +32,27 @@ impl BinanceWebSocketClient {
         Ok((WebSocketState::new(socket), response))
     }
 
+    pub async fn connect_async_with_message_limit(
+        url: &str,
+        msg_limit: usize,
+    ) -> Result<(WebSocketState<MaybeTlsStream<TcpStream>>, Response), Error> {
+        let config = WebSocketConfig {
+            max_write_buffer_size: msg_limit,
+            ..Default::default()
+        };
+        let (socket, response) =
+            connect_async_with_config(Url::parse(&url).unwrap(), Some(config), false).await?;
+
+        log::info!("Connected to {}", url);
+        log::debug!("Response HTTP code: {}", response.status());
+        log::debug!("Response headers:");
+        for (ref header, _value) in response.headers() {
+            log::debug!("* {}", header);
+        }
+
+        Ok((WebSocketState::new(socket), response))
+    }
+
     pub async fn connect_async_default(
     ) -> Result<(WebSocketState<MaybeTlsStream<TcpStream>>, Response), Error> {
         BinanceWebSocketClient::connect_async("wss://stream.binance.com:9443/stream").await
@@ -35,7 +60,7 @@ impl BinanceWebSocketClient {
 }
 
 pub struct WebSocketState<T> {
-    socket: WebSocketStream<T>,
+    pub socket: WebSocketStream<T>,
     id: u64,
 }
 

@@ -87,17 +87,20 @@ pub mod tokio_tungstenite;
 #[cfg(feature = "enable-tungstenite")]
 pub mod tungstenite;
 
-#[cfg(feature = "enable-hyper")]
-pub mod hyper;
+//#[cfg(feature = "enable-hyper")]
+//pub mod hyper;
 
 #[cfg(feature = "enable-ureq")]
 pub mod ureq;
+
+pub mod client;
 
 pub mod http;
 
 pub mod isolated_margin_stream;
 pub mod margin_stream;
 pub mod market_stream;
+pub mod portfolio_margin_stream;
 pub mod stream;
 pub mod user_data_stream;
 

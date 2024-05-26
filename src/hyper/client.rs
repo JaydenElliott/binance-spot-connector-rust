@@ -5,10 +5,9 @@ use hyper::{client::connect::Connect, client::HttpConnector, Body, Client, Uri};
 use hyper_tls::HttpsConnector;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-#[derive(Clone)]
 pub struct BinanceHttpClient<T>
 where
-    T: Connect + Clone + Send + Sync + 'static,
+    T: Connect + Send + Sync + 'static,
 {
     client: Client<T, Body>,
     base_url: String,
@@ -18,7 +17,7 @@ where
 
 impl<T> BinanceHttpClient<T>
 where
-    T: Connect + Clone + Send + Sync + 'static,
+    T: Connect + Send + Sync + 'static,
 {
     pub fn new(client: Client<T, Body>, base_url: &str) -> Self {
         Self {
@@ -53,7 +52,7 @@ impl BinanceHttpClient<HttpsConnector<HttpConnector>> {
 
 impl<T> BinanceHttpClient<T>
 where
-    T: Connect + Clone + Send + Sync + 'static,
+    T: Connect + Send + Sync + 'static,
 {
     pub async fn send<R: Into<Request>>(&self, request: R) -> Result<Response, Error> {
         let Request {
@@ -65,13 +64,15 @@ where
         } = request.into();
         let mut url_parts = vec![self.base_url.to_owned(), path];
         let has_params = !params.is_empty();
-        let mut serializer = url::form_urlencoded::Serializer::new(String::new());
-        if has_params {
-            for (k, v) in params.iter() {
-                serializer.append_pair(k, v);
+        let mut query_string = {
+            let mut serializer = url::form_urlencoded::Serializer::new(String::new());
+            if has_params {
+                for (k, v) in params.iter() {
+                    serializer.append_pair(k, v);
+                }
             }
-        }
-        let mut query_string = serializer.finish();
+            serializer.finish()
+        };
         let mut hyper_request = hyper::Request::builder().method(method);
         let user_agent = &format!("binance-spot-connector-rust/{}", VERSION);
         hyper_request = hyper_request.header("User-Agent", user_agent);

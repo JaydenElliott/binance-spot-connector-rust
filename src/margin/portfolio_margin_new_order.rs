@@ -1,11 +1,11 @@
 use crate::http::{request::Request, Credentials, Method};
 use rust_decimal::Decimal;
 
-/// `POST /sapi/v1/margin/order`
+/// `POST /papi/v1/margin/order`
 ///
-/// Post a new order for margin account.
+/// Post a new order for portfolio margin account.
 ///
-/// Weight(UID): 6
+/// Weight(UID): 1
 ///
 /// # Example
 ///
@@ -13,34 +13,32 @@ use rust_decimal::Decimal;
 /// use binance_spot_connector_rust::margin;
 /// use rust_decimal_macros::dec;
 ///
-/// let request = margin::margin_new_order("BNBUSDT", "SELL", "MARKET").quantity(dec!(1.01)).price(dec!(10)).stop_price(dec!(20.01)).time_in_force("GTC");
+/// let request = margin::portfolio_margin_new_order("BNBUSDT", "SELL", "MARKET").quantity(dec!(1.01)).price(dec!(10)).stop_price(dec!(20.01)).time_in_force("GTC");
 /// ```
-pub struct MarginNewOrder {
+pub struct PortfolioMarginNewOrder {
     symbol: String,
     side: String,
     r#type: String,
-    is_isolated: Option<bool>,
     quantity: Option<Decimal>,
     quote_order_qty: Option<Decimal>,
     price: Option<Decimal>,
     stop_price: Option<Decimal>,
     new_client_order_id: Option<String>,
-    iceberg_qty: Option<Decimal>,
     new_order_resp_type: Option<String>,
+    iceberg_qty: Option<Decimal>,
     side_effect_type: Option<String>,
     time_in_force: Option<String>,
     recv_window: Option<u64>,
+    self_trade_prevention_mode: Option<String>,
     credentials: Option<Credentials>,
-    auto_repay_at_cancel: Option<bool>,
 }
 
-impl MarginNewOrder {
+impl PortfolioMarginNewOrder {
     pub fn new(symbol: &str, side: &str, r#type: &str) -> Self {
         Self {
             symbol: symbol.to_owned(),
             side: side.to_owned(),
             r#type: r#type.to_owned(),
-            is_isolated: None,
             quantity: None,
             quote_order_qty: None,
             price: None,
@@ -51,19 +49,9 @@ impl MarginNewOrder {
             side_effect_type: None,
             time_in_force: None,
             recv_window: None,
+            self_trade_prevention_mode: None,
             credentials: None,
-            auto_repay_at_cancel: None,
         }
-    }
-
-    pub fn is_isolated(mut self, is_isolated: bool) -> Self {
-        self.is_isolated = Some(is_isolated);
-        self
-    }
-
-    pub fn auto_repay_at_cancel(mut self, auto_repay_at_cancel: bool) -> Self {
-        self.auto_repay_at_cancel = Some(auto_repay_at_cancel);
-        self
     }
 
     pub fn quantity(mut self, quantity: Decimal) -> Self {
@@ -116,26 +104,24 @@ impl MarginNewOrder {
         self
     }
 
+    pub fn self_trade_prevention_mode(mut self, self_trade_prevention_mode: String) -> Self {
+        self.self_trade_prevention_mode = Some(self_trade_prevention_mode);
+        self
+    }
+
     pub fn credentials(mut self, credentials: &Credentials) -> Self {
         self.credentials = Some(credentials.clone());
         self
     }
 }
 
-impl From<MarginNewOrder> for Request {
-    fn from(request: MarginNewOrder) -> Request {
+impl From<PortfolioMarginNewOrder> for Request {
+    fn from(request: PortfolioMarginNewOrder) -> Request {
         let mut params = vec![
             ("symbol".to_owned(), request.symbol.to_string()),
             ("side".to_owned(), request.side.to_string()),
             ("type".to_owned(), request.r#type.to_string()),
         ];
-
-        if let Some(is_isolated) = request.is_isolated {
-            params.push((
-                "isIsolated".to_owned(),
-                is_isolated.to_string().to_uppercase(),
-            ));
-        }
 
         if let Some(quantity) = request.quantity {
             params.push(("quantity".to_owned(), quantity.to_string()));
@@ -177,15 +163,15 @@ impl From<MarginNewOrder> for Request {
             params.push(("recvWindow".to_owned(), recv_window.to_string()));
         }
 
-        if let Some(auto_repay_at_cancel) = request.auto_repay_at_cancel {
+        if let Some(self_trade_prevention_mode) = request.self_trade_prevention_mode {
             params.push((
-                "autoRepayAtCancel".to_owned(),
-                auto_repay_at_cancel.to_string(),
+                "selfTradePreventionMode".to_owned(),
+                self_trade_prevention_mode,
             ));
         }
 
         Request {
-            path: "/sapi/v1/margin/order".to_owned(),
+            path: "/papi/v1/margin/order".to_owned(),
             method: Method::Post,
             params,
             credentials: request.credentials,
@@ -196,7 +182,7 @@ impl From<MarginNewOrder> for Request {
 
 #[cfg(test)]
 mod tests {
-    use super::MarginNewOrder;
+    use super::PortfolioMarginNewOrder;
     use crate::http::{request::Request, Credentials, Method};
     use rust_decimal_macros::dec;
 
@@ -207,7 +193,7 @@ mod tests {
     fn margin_margin_new_order_convert_to_request_test() {
         let credentials = Credentials::from_hmac(API_KEY.to_owned(), API_SECRET.to_owned());
 
-        let request: Request = MarginNewOrder::new("BNBUSDT", "SELL", "MARKET")
+        let request: Request = PortfolioMarginNewOrder::new("BNBUSDT", "SELL", "MARKET")
             .quantity(dec!(1.01))
             .price(dec!(10))
             .stop_price(dec!(20.01))
@@ -229,7 +215,6 @@ mod tests {
                     ("quantity".to_owned(), "1.01".to_string()),
                     ("price".to_owned(), "10".to_string()),
                     ("stopPrice".to_owned(), "20.01".to_string()),
-                    ("timeInForce".to_owned(), "GTC".to_string()),
                     ("recvWindow".to_owned(), "5000".to_string()),
                 ],
                 sign: true
